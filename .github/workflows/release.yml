@@ -1,0 +1,26 @@
+name: "release"
+
+on:
+  push:
+    branches: [beta, alpha, master]
+
+jobs:
+  check:
+    uses: vodyani/workflows/.github/workflows/check.yml@master
+    with:
+      enable_test: true
+
+  codecov:
+    needs: [check]
+    uses: vodyani/workflows/.github/workflows/codecov.yml@master
+    secrets:
+      CODE_COV_CI_TOKEN: ${{ secrets.CODECOV_CI_TOKEN_BY_APOLLO_CLIENT }}
+
+  semantic_release:
+    needs: [codecov]
+    uses: vodyani/workflows/.github/workflows/semantic-release-npm.yml@master
+    secrets:
+      NPM_CI_TOKEN: ${{ secrets.NPM_CI_TOKEN }}
+      GITHUB_CI_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      enable_build: true

@@ -1,0 +1,23 @@
+{
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "NEST_SERVER",
+      "env": {
+        "NODE_ENV": "LOCAL",
+        "NODE_PORT": "3000",
+        "NODE_NAME": "blued-live-jobs"
+      },
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register"
+      ],
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "program": "${workspaceRoot}/src/struct/client.ts",
+    }
+  ]
+}

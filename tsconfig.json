@@ -1,0 +1,21 @@
+{
+  "include": [
+    "src",
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": ["ESNext"],
+    "target": "ES6",
+    "outDir": "dist",
+    "module": "CommonJS",
+    "sourceMap": true,
+    "declaration": true,
+    "incremental": false,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "removeComments": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  }
+}
