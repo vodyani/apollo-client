@@ -1,7 +1,7 @@
 {
   "name": "@vodyani/apollo-client",
   "license": "MIT",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "author": "ChoGathK",
   "description": "🛸 apollo client sdk",
   "homepage": "https://github.com/vodyani/apollo-client#readme",
