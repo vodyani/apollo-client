@@ -15,17 +15,27 @@ export class ApolloClient {
 
   @This
   public async getConfig(namespace: string, type: NamespaceType, ip?: string) {
-    return this.httpClient.getConfig(namespace, type, ip);
+    try {
+      const result = await this.httpClient.getConfig(namespace, type, ip);
+      return result;
+    } catch (error) {
+      throw new Error('Incorrect request, please check parameters!');
+    }
   }
 
   @This
   public async getConfigByCache(namespace: string, type: NamespaceType, ip?: string) {
-    return this.httpClient.getConfigByCache(namespace, type, ip);
+    try {
+      const result = await this.httpClient.getConfigByCache(namespace, type, ip);
+      return result;
+    } catch (error) {
+      throw new Error('Incorrect request, please check parameters!');
+    }
   }
 
   @This
   public async listenNamespaces(infos: ObserverInfo[]) {
-    this.scheduler.listen(infos);
+    await this.scheduler.deploy(infos);
   }
 
   @This

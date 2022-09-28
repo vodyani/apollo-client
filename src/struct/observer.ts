@@ -1,5 +1,5 @@
 import { This } from '@vodyani/class-decorator';
-import { isValidArray, circular, CircularHandler } from '@vodyani/utils';
+import { isValid, isValidArray, sleep } from '@vodyani/utils';
 
 import {
   NamespaceConfigCallback,
@@ -53,20 +53,27 @@ export class ApolloNamespaceSubject implements Subject {
   @This
   public async longPolling(namespace: string, type: NamespaceType, ip?: string) {
     // start long polling.
-    const data = await this.apolloClient.longPolling([{
+    const data = await this.apolloClient.getConfigNotifications([{
       namespaceName: namespace,
       notificationId: this.id,
       type,
     }]);
 
     if (isValidArray(data)) {
-      const info = data.find(e => e.namespaceName === namespace);
-      const config = await this.apolloClient.getConfig(namespace, type, ip);
+      const info = data.find(e => {
+        const namespaceName = e.namespaceName.includes('.json')
+          ? e.namespaceName.split('.json')[0]
+          : e.namespaceName;
 
-      this.id = info.notificationId;
+        return namespaceName === namespace;
+      });
 
-      // notify all observer.
-      this.notify(config);
+      if (isValid(info)) {
+        const config = await this.apolloClient.getConfig(namespace, type, ip);
+
+        this.id = info.notificationId;
+        this.notify(config);
+      }
     }
   }
 }
@@ -83,43 +90,56 @@ export class ApolloNamespaceObserver implements Observer {
 }
 
 export class ApolloScheduler implements Scheduler {
-  private handlers = new Map<string, CircularHandler>();
+  private listener = new Map<string, number>();
 
   constructor(
     private readonly apolloClient: ApolloHttpClient,
   ) {}
 
   @This
-  public listen(infos: ObserverInfo[], interval = 60000) {
+  public async deploy(infos: ObserverInfo[]) {
     for (const info of infos) {
       const subject = new ApolloNamespaceSubject(this.apolloClient);
       const observer = new ApolloNamespaceObserver(info.callback);
 
       subject.attach(observer);
 
-      const handler = circular(this.longPolling, interval, info, subject);
-      this.handlers.set(info.namespace, handler);
+      await this.listen(subject, info);
     }
   }
 
   @This
   public close() {
-    this.handlers.forEach(({ close }) => close());
+    this.listener.forEach((_, namespace) => this.clear(namespace));
   }
 
   @This
   public clear(namespace: string) {
-    if (this.handlers.has(namespace)) {
-      this.handlers.get(namespace).close();
-      this.handlers.delete(namespace);
+    if (this.listener.has(namespace)) {
+      this.listener.delete(namespace);
     }
   }
 
   @This
-  private async longPolling(
-    info: ObserverInfo,
+  private async listen(
     subject: ApolloNamespaceSubject,
+    { namespace, type, ip }: ObserverInfo,
   ) {
-    await subject.longPolling(info.namespace, info.type, info.ip);
+    this.listener.set(namespace, 1);
+
+    let done = true;
+
+    while (done && this.listener.get(namespace) === 1) {
+      done = false;
+
+      try {
+        await subject.longPolling(namespace, type, ip);
+      } catch (err) {
+        console.error(err);
+        await sleep(1000);
+      }
+
+      done = true;
+    }
   }
 }
