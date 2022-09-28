@@ -14,7 +14,7 @@ import { HeaderSigner } from './header-signer';
 export class ApolloHttpClient {
   private readonly httpClient: HttpClient;
 
-  private readonly httpAgent = new AgentKeepAlive({ 'keepAlive': true });
+  private readonly httpAgent = new AgentKeepAlive({ keepAlive: true });
 
   constructor(
     private readonly options: ApolloClientOptions,
@@ -121,7 +121,7 @@ export class ApolloThirdPartyHttpClient {
 
   private readonly httpClient: HttpClient;
 
-  private readonly httpAgent = new AgentKeepAlive({ 'keepAlive': true });
+  private readonly httpAgent = new AgentKeepAlive({ keepAlive: true });
 
   constructor(
     private readonly options: ApolloThirdPartyClientOptions,
