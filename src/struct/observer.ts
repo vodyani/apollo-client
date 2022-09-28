@@ -131,7 +131,7 @@ export class ApolloScheduler implements Scheduler {
       try {
         await subject.longPolling(namespace, type, ip);
       } catch (err) {
-        console.error(err);
+        console.error(err.message);
         await sleep(1000);
       }
     }
