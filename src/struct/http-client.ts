@@ -4,10 +4,12 @@ import { HttpClient } from '@vodyani/http-client';
 import {
   ApolloClientOptions,
   ApolloLongPollingInfo,
-  ApolloLongPollingOptions,
+  ApolloNotificationOptions,
   ApolloThirdPartyClientOptions,
   NamespaceType,
 } from '../common';
+
+import { HeaderSigner } from './header-signer';
 
 export class ApolloHttpClient {
   private readonly httpClient: HttpClient;
@@ -15,19 +17,8 @@ export class ApolloHttpClient {
   constructor(
     private readonly options: ApolloClientOptions,
   ) {
-    const { appId, configServerUrl, secret } = options;
-
-    const config = Object({ baseURL: configServerUrl });
-
-    if (secret) {
-      config.headers = {
-        'Timestamp': Date.now(),
-        'Authorization': `Apollo ${appId}:${secret}`,
-        'Content-Type': 'application/json;charset=UTF-8',
-      };
-    }
-
-    this.httpClient = new HttpClient(config);
+    this.httpClient = new HttpClient();
+    this.options.clusterName = this.options.clusterName || 'default';
   }
 
   @This
@@ -36,12 +27,12 @@ export class ApolloHttpClient {
     const namespaceName = type === 'json' ? `${namespace}.json` : namespace;
     const url = `${configServerUrl}/configs/${appId}/${clusterName}/${namespaceName}`;
 
-    const result = await this.httpClient.getData(
+    const result = await this.httpClient.get(
       url,
-      { timeout: 15000, params: { ip }},
+      { headers: this.generateHeaders(url), timeout: 15000, params: { ip }},
     );
 
-    return result.configurations;
+    return type === 'json' ? JSON.parse(result?.data?.configurations?.content) : result?.data?.configurations;
   }
 
   @This
@@ -50,34 +41,30 @@ export class ApolloHttpClient {
     const namespaceName = type === 'json' ? `${namespace}.json` : namespace;
     const url = `${configServerUrl}/configfiles/json/${appId}/${clusterName}/${namespaceName}`;
 
-    const result = await this.httpClient.getData(
+    const result = await this.httpClient.get(
       url,
-      { timeout: 15000, params: { ip }},
+      { headers: this.generateHeaders(url), timeout: 15000, params: { ip }},
     );
 
-    return result;
+    return type === 'json' ? JSON.parse(result?.data?.content) : result?.data;
   }
 
   @This
-  public async longPolling(infos: ApolloLongPollingOptions[]) {
+  public async getConfigNotifications(infos: ApolloNotificationOptions[]) {
     const { appId, clusterName, configServerUrl } = this.options;
-    const url = `${configServerUrl}/notifications/v2`;
 
     const realInfos: ApolloLongPollingInfo[] = infos.map(e => {
       const namespaceName = e.type === 'json' ? `${e.namespaceName}.json` : e.namespaceName;
       return { namespaceName, notificationId: e.notificationId };
     });
 
+    const url = encodeURI(
+      `${configServerUrl}/notifications/v2?appId=${appId}&cluster=${clusterName}&notifications=${JSON.stringify(realInfos)}`,
+    );
+
     const result = await this.httpClient.get(
       url,
-      {
-        timeout: 65000,
-        params: {
-          appId,
-          cluster: clusterName,
-          notifications: JSON.stringify(realInfos),
-        },
-      },
+      { headers: this.generateHeaders(url), timeout: 65000 },
     );
 
     // no change ...
@@ -85,7 +72,20 @@ export class ApolloHttpClient {
       return null;
     }
 
-    return result.data as ApolloLongPollingInfo[];
+    return result?.data as ApolloLongPollingInfo[];
+  }
+
+  @This
+  private generateHeaders(url: string) {
+    let headers = Object();
+    const { appId, secret } = this.options;
+
+    if (secret) {
+      const singer = new HeaderSigner(appId, secret);
+      headers = singer.signature(url);
+    }
+
+    return headers;
   }
 }
 
