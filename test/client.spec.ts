@@ -60,7 +60,7 @@ describe('ApolloClient', () => {
         callback: (config: any) => {
           if (config.content === '2') {
             apolloClient.clearListener('listenNamespace');
-            apolloClient.closeListener();
+            apolloClient.closeAllListener();
             expect(!!config.content).toBe(true);
           }
         },

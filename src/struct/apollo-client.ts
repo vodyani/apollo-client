@@ -39,7 +39,7 @@ export class ApolloClient {
   }
 
   @This
-  public async closeListener() {
+  public async closeAllListener() {
     this.scheduler.close();
   }
 

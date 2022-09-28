@@ -24,7 +24,7 @@ export class ApolloHttpClient {
   @This
   public async getConfig(namespace: string, type: NamespaceType, ip?: string): Promise<Record<string, any>> {
     const { appId, clusterName, configServerUrl } = this.options;
-    const namespaceName = type === 'json' ? `${namespace}.json` : namespace;
+    const namespaceName = this.generateNamespace(namespace, type);
     const url = `${configServerUrl}/configs/${appId}/${clusterName}/${namespaceName}`;
 
     const result = await this.httpClient.get(
@@ -38,7 +38,7 @@ export class ApolloHttpClient {
   @This
   public async getConfigByCache(namespace: string, type: NamespaceType, ip?: string): Promise<Record<string, any>> {
     const { appId, clusterName, configServerUrl } = this.options;
-    const namespaceName = type === 'json' ? `${namespace}.json` : namespace;
+    const namespaceName = this.generateNamespace(namespace, type);
     const url = `${configServerUrl}/configfiles/json/${appId}/${clusterName}/${namespaceName}`;
 
     const result = await this.httpClient.get(
@@ -53,10 +53,11 @@ export class ApolloHttpClient {
   public async getConfigNotifications(infos: ApolloNotificationOptions[]) {
     const { appId, clusterName, configServerUrl } = this.options;
 
-    const realInfos: ApolloLongPollingInfo[] = infos.map(e => {
-      const namespaceName = e.type === 'json' ? `${e.namespaceName}.json` : e.namespaceName;
-      return { namespaceName, notificationId: e.notificationId };
-    });
+    const realInfos: ApolloLongPollingInfo[] = infos
+      .map(({ namespaceName, notificationId, type }) => ({
+        notificationId,
+        namespaceName: this.generateNamespace(namespaceName, type),
+      }));
 
     const url = encodeURI(
       `${configServerUrl}/notifications/v2?appId=${appId}&cluster=${clusterName}&notifications=${JSON.stringify(realInfos)}`,
@@ -67,12 +68,9 @@ export class ApolloHttpClient {
       { headers: this.generateHeaders(url), timeout: 65000 },
     );
 
-    // no change ...
-    if (result.status === 304) {
-      return null;
-    }
-
-    return result?.data as ApolloLongPollingInfo[];
+    return result.status === 304
+      ? null
+      : result?.data as ApolloLongPollingInfo[];
   }
 
   @This
@@ -86,6 +84,11 @@ export class ApolloHttpClient {
     }
 
     return headers;
+  }
+
+  @This
+  private generateNamespace(namespace: string, type: NamespaceType) {
+    return type === 'json' ? `${namespace}.json` : namespace;
   }
 }
 
