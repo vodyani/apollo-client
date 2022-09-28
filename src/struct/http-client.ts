@@ -1,5 +1,5 @@
 import { This } from '@vodyani/class-decorator';
-import { HttpClient } from '@vodyani/http-client';
+import { AgentKeepAlive, HttpClient } from '@vodyani/http-client';
 
 import {
   ApolloClientOptions,
@@ -14,6 +14,8 @@ import { HeaderSigner } from './header-signer';
 export class ApolloHttpClient {
   private readonly httpClient: HttpClient;
 
+  private readonly httpAgent = new AgentKeepAlive({ 'keepAlive': true });
+
   constructor(
     private readonly options: ApolloClientOptions,
   ) {
@@ -24,29 +26,43 @@ export class ApolloHttpClient {
   @This
   public async getConfig(namespace: string, type: NamespaceType, ip?: string): Promise<Record<string, any>> {
     const { appId, clusterName, configServerUrl } = this.options;
-    const namespaceName = this.generateNamespace(namespace, type);
-    const url = `${configServerUrl}/configs/${appId}/${clusterName}/${namespaceName}`;
+
+    let url = configServerUrl;
+    url += `/configs/${appId}/${clusterName}`;
+    url += `/${this.generateNamespace(namespace, type)}`;
 
     const result = await this.httpClient.get(
       url,
-      { headers: this.generateHeaders(url), timeout: 15000, params: { ip }},
+      {
+        headers: this.generateHeaders(url),
+        httpAgent: this.httpAgent,
+        timeout: 15000,
+        params: { ip },
+      },
     );
 
-    return type === 'json' ? JSON.parse(result?.data?.configurations?.content) : result?.data?.configurations;
+    return this.generateContent(result?.data?.configurations, type);
   }
 
   @This
   public async getConfigByCache(namespace: string, type: NamespaceType, ip?: string): Promise<Record<string, any>> {
     const { appId, clusterName, configServerUrl } = this.options;
-    const namespaceName = this.generateNamespace(namespace, type);
-    const url = `${configServerUrl}/configfiles/json/${appId}/${clusterName}/${namespaceName}`;
+
+    let url = configServerUrl;
+    url += `/configfiles/json/${appId}/${clusterName}`;
+    url += `/${this.generateNamespace(namespace, type)}`;
 
     const result = await this.httpClient.get(
       url,
-      { headers: this.generateHeaders(url), timeout: 15000, params: { ip }},
+      {
+        headers: this.generateHeaders(url),
+        httpAgent: this.httpAgent,
+        timeout: 15000,
+        params: { ip },
+      },
     );
 
-    return type === 'json' ? JSON.parse(result?.data?.content) : result?.data;
+    return this.generateContent(result?.data, type);
   }
 
   @This
@@ -59,18 +75,21 @@ export class ApolloHttpClient {
         namespaceName: this.generateNamespace(namespaceName, type),
       }));
 
-    const url = encodeURI(
-      `${configServerUrl}/notifications/v2?appId=${appId}&cluster=${clusterName}&notifications=${JSON.stringify(realInfos)}`,
-    );
+    let url = configServerUrl;
+    url += `/notifications/v2?appId=${appId}&cluster=${clusterName}`;
+    url += `&notifications=${JSON.stringify(realInfos)}`;
+    url = encodeURI(url);
 
     const result = await this.httpClient.get(
       url,
-      { headers: this.generateHeaders(url), timeout: 65000 },
+      {
+        headers: this.generateHeaders(url),
+        httpAgent: this.httpAgent,
+        timeout: 650000,
+      },
     );
 
-    return result.status === 304
-      ? null
-      : result?.data as ApolloLongPollingInfo[];
+    return result.status === 304 ? null : result?.data as ApolloLongPollingInfo[];
   }
 
   @This
@@ -87,14 +106,22 @@ export class ApolloHttpClient {
   }
 
   @This
+  private generateContent(data: Record<string, any>, type: NamespaceType) {
+    return type === 'json' ? JSON.parse(data.content) : data;
+  }
+
+  @This
   private generateNamespace(namespace: string, type: NamespaceType) {
     return type === 'json' ? `${namespace}.json` : namespace;
   }
 }
 
 export class ApolloThirdPartyHttpClient {
-  private readonly httpClient: HttpClient;
   private readonly httpBasePath: string;
+
+  private readonly httpClient: HttpClient;
+
+  private readonly httpAgent = new AgentKeepAlive({ 'keepAlive': true });
 
   constructor(
     private readonly options: ApolloThirdPartyClientOptions,
@@ -121,6 +148,7 @@ export class ApolloThirdPartyHttpClient {
       url,
       {
         timeout: 15000,
+        httpAgent: this.httpAgent,
         params: { createIfNotExists: true },
         data: { key, value, dataChangeLastModifiedBy: this.options.operator },
       },
@@ -138,6 +166,7 @@ export class ApolloThirdPartyHttpClient {
       url,
       {
         timeout: 15000,
+        httpAgent: this.httpAgent,
         params: { key, operator: this.options.operator },
       },
     );
@@ -153,6 +182,7 @@ export class ApolloThirdPartyHttpClient {
       url,
       {
         timeout: 15000,
+        httpAgent: this.httpAgent,
         data: { releaseTitle: `release-${this.options.appId}-${Date.now()}`, releasedBy: this.options.operator },
       },
     );
