@@ -99,6 +99,7 @@ export class ApolloScheduler implements Scheduler {
   @This
   public async deploy(infos: ObserverInfo[]) {
     for (const info of infos) {
+      // todo: 一对一的常见不适用观察者模式，需要改
       const subject = new ApolloNamespaceSubject(this.apolloClient);
       const observer = new ApolloNamespaceObserver(info.callback);
 
