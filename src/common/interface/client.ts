@@ -5,7 +5,7 @@ export interface ApolloLongPollingInfo {
   notificationId: number;
 }
 
-export interface ApolloLongPollingOptions extends ApolloLongPollingInfo {
+export interface ApolloNotificationOptions extends ApolloLongPollingInfo {
   type: NamespaceType;
 }
 

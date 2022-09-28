@@ -127,19 +127,13 @@ export class ApolloScheduler implements Scheduler {
   ) {
     this.listener.set(namespace, 1);
 
-    let done = true;
-
-    while (done && this.listener.get(namespace) === 1) {
-      done = false;
-
+    while (this.listener.get(namespace) === 1) {
       try {
         await subject.longPolling(namespace, type, ip);
       } catch (err) {
         console.error(err);
         await sleep(1000);
       }
-
-      done = true;
     }
   }
 }

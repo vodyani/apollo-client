@@ -14,7 +14,7 @@ export interface Observer {
 }
 
 export interface Scheduler {
-  listen(...args: any[]): void;
+  deploy(...args: any[]): void;
   close(...args: any[]): void;
   clear(...args: any[]): void;
 }
