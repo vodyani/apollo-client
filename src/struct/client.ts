@@ -5,7 +5,6 @@ import {
   ApolloClientOptions,
   ApolloLongPollingInfo,
   ApolloNotificationOptions,
-  ApolloThirdPartyClientOptions,
   NamespaceType,
 } from '../common';
 
@@ -41,7 +40,7 @@ export class ApolloHttpClient {
       },
     );
 
-    return this.generateContent(result?.data?.configurations, type);
+    return this.generateContent(result.data.configurations, type);
   }
 
   @This
@@ -62,7 +61,7 @@ export class ApolloHttpClient {
       },
     );
 
-    return this.generateContent(result?.data, type);
+    return this.generateContent(result.data, type);
   }
 
   @This
@@ -89,20 +88,13 @@ export class ApolloHttpClient {
       },
     );
 
-    return result.status === 304 ? null : result?.data as ApolloLongPollingInfo[];
+    return result.data as ApolloLongPollingInfo[];
   }
 
   @This
   private generateHeaders(url: string) {
-    let headers = Object();
     const { appId, secret } = this.options;
-
-    if (secret) {
-      const singer = new HeaderSigner(appId, secret);
-      headers = singer.signature(url);
-    }
-
-    return headers;
+    return secret ? new HeaderSigner(appId, secret).signature(url) : Object();
   }
 
   @This
@@ -113,78 +105,5 @@ export class ApolloHttpClient {
   @This
   private generateNamespace(namespace: string, type: NamespaceType) {
     return type === 'json' ? `${namespace}.json` : namespace;
-  }
-}
-
-export class ApolloThirdPartyHttpClient {
-  private readonly httpBasePath: string;
-
-  private readonly httpClient: HttpClient;
-
-  private readonly httpAgent = new AgentKeepAlive({ keepAlive: true });
-
-  constructor(
-    private readonly options: ApolloThirdPartyClientOptions,
-  ) {
-    const { appId, clusters, env, token, portalServerUrl } = options;
-
-    this.httpClient = new HttpClient({
-      baseURL: portalServerUrl,
-      headers: {
-        'Authorization': token,
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-    });
-
-    this.httpBasePath = `/openapi/v1/envs/${env}/apps/${appId}/clusters/${clusters}/namespaces/`;
-  }
-
-  @This
-  public async saveOrUpdate(namespace: string, type: NamespaceType, value: string, key: string) {
-    const namespaceName = type === 'json' ? `${namespace}.json` : namespace;
-    const url = `${this.httpBasePath}${namespaceName}/items/${key}`;
-
-    await this.httpClient.put(
-      url,
-      {
-        timeout: 15000,
-        httpAgent: this.httpAgent,
-        params: { createIfNotExists: true },
-        data: { key, value, dataChangeLastModifiedBy: this.options.operator },
-      },
-    );
-
-    await this.publish(namespaceName);
-  }
-
-  @This
-  public async delete(namespace: string, type: NamespaceType, key: string) {
-    const namespaceName = type === 'json' ? `${namespace}.json` : namespace;
-    const url = `${this.httpBasePath}${namespaceName}/items/${key}`;
-
-    await this.httpClient.delete(
-      url,
-      {
-        timeout: 15000,
-        httpAgent: this.httpAgent,
-        params: { key, operator: this.options.operator },
-      },
-    );
-
-    await this.publish(namespaceName);
-  }
-
-  @This
-  private async publish(namespaceName: string) {
-    const url = `${this.httpBasePath}${namespaceName}/releases`;
-
-    await this.httpClient.post(
-      url,
-      {
-        timeout: 15000,
-        httpAgent: this.httpAgent,
-        data: { releaseTitle: `release-${this.options.appId}-${Date.now()}`, releasedBy: this.options.operator },
-      },
-    );
   }
 }

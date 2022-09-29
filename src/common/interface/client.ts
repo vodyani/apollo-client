@@ -22,5 +22,5 @@ export interface ApolloThirdPartyClientOptions {
   portalServerUrl: string
   token: string;
   clusters?: string;
-  operator?: string;
+  operator: string;
 }
