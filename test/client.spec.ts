@@ -147,5 +147,5 @@ describe('ApolloClient', () => {
     }
 
     apolloClient.closeAllListener();
-  }, 10000);
+  }, 90000);
 });
