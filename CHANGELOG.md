@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/vodyani/apollo-client/compare/v1.1.0...v1.2.0) (2022-09-29)
+
+
+### Features
+
+* completed unit testing of all features and optimized for features with performance issues 🎉 ([556ea51](https://github.com/vodyani/apollo-client/commit/556ea5159c5dd7c546e2b6389d85fb61018a45fa))
+
 # [1.1.0](https://github.com/vodyani/apollo-client/compare/v1.0.0...v1.1.0) (2022-09-28)
 
 
