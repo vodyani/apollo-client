@@ -35,7 +35,7 @@ describe('ApolloClient', () => {
     } catch (error) {
       expect(error.message).toBe('Incorrect request, please check appId or secret!');
     }
-  });
+  }, 900000);
 
   it('getConfigByCache', async () => {
     const application = await apolloClient.getConfigByCache('application', 'properties');
@@ -117,7 +117,7 @@ describe('ApolloClient', () => {
     } catch (error) {
       expect(error.message).toBe('Incorrect request, namespace is duplication!');
     }
-  });
+  }, 900000);
 
   it('listenNamespace error', async () => {
     const clientOptions: ApolloClientOptions = {
