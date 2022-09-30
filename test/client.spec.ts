@@ -1,7 +1,7 @@
 import { describe, it, expect } from '@jest/globals';
 
-import { ApolloClientProvider } from '../src/provider';
-import { ApolloClientOptions } from '../src/common';
+import { ApolloClientProvider, ApolloThirdPartClientProvider } from '../src/provider';
+import { ApolloClientOptions, ApolloThirdPartyHttpClientOptions } from '../src/common';
 
 const clientOptions: ApolloClientOptions = {
   configServerUrl: 'http://106.54.227.205:8080',
@@ -78,33 +78,45 @@ describe('ApolloClient', () => {
   }, 900000);
 
   it('listenNamespace', async () => {
-    await apolloClient.listenNamespaces(
-      [
-        {
-          type: 'properties',
-          namespace: 'listenNamespace',
-          callback: (config: any) => {
-            if (config.content === '1') {
-              apolloClient.clearListener('listenNamespace');
-              expect(!!config.content).toBe(true);
-            }
-          },
-        },
-        {
-          type: 'json',
-          namespace: 'listenNamespace3',
-          callback: (config: any) => {
-            if (config.content === '3') {
-              apolloClient.clearListener('listenNamespace3');
-              expect(!!config.content).toBe(true);
-            }
-          },
-        },
-      ],
-    );
+    const time = String(Date.now());
+    const clientOptions: ApolloThirdPartyHttpClientOptions = {
+      env: 'DEV',
+      operator: 'apollo',
+      appId: 'vodyani-apollo-config',
+      portalServerUrl: 'http://106.54.227.205',
+      token: 'fbf1302cd6b2417ebf4511555facbb2371a0fc40',
+    };
+    const httpClient = new ApolloThirdPartClientProvider(clientOptions);
 
-    // 增加修改 + 发布的流程，触发名称更新
-  }, 900000);
+    await Promise.all([
+      apolloClient.listenNamespaces(
+        [
+          {
+            type: 'properties',
+            namespace: 'listenNamespace',
+            callback: (config: any) => {
+              if (config.content === time) {
+                apolloClient.clearListener('listenNamespace');
+                expect(!!config.content).toBe(true);
+              }
+            },
+          },
+          {
+            type: 'json',
+            namespace: 'listenNamespace3',
+            callback: (config: any) => {
+              if (config.content === time) {
+                apolloClient.clearListener('listenNamespace3');
+                expect(!!config.content).toBe(true);
+              }
+            },
+          },
+        ],
+      ),
+      httpClient.saveConfig('listenNamespace', 'properties', time),
+      httpClient.saveConfig('listenNamespace3', 'json', JSON.stringify({ content: time })),
+    ]);
+  });
 
   it('listenNamespace Namespace duplication', async () => {
     try {
@@ -123,6 +135,8 @@ describe('ApolloClient', () => {
     const clientOptions: ApolloClientOptions = {
       configServerUrl: 'http://106.54.227.205:8080',
       appId: 'vodyani-apollo-config',
+      retry: 1,
+      delay: 100,
     };
 
     const apolloClient = new ApolloClientProvider(clientOptions);
