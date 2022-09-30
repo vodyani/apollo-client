@@ -13,6 +13,8 @@ export class ApolloScheduler {
 
   constructor(
     private readonly apolloClient: ApolloHttpClient,
+    private readonly retry = 1,
+    private readonly delay = 1000,
   ) {}
 
   @This
@@ -48,10 +50,10 @@ export class ApolloScheduler {
       } catch (err) {
         errorCount++;
 
-        if (errorCount > 4) {
+        if (errorCount > this.retry) {
           throw new Error('Incorrect long polling, please check appId of secret!');
         } else {
-          await sleep(2000);
+          await sleep(this.delay);
         }
       }
     }
@@ -66,6 +68,7 @@ export class ApolloScheduler {
       const { namespace, type, id } = info;
 
       listeners.push(info);
+
       notifications.push({ namespaceName: namespace, notificationId: id, type });
     });
 
@@ -73,7 +76,7 @@ export class ApolloScheduler {
 
     if (isValidArray(data)) {
       for (const listener of listeners) {
-        const { callback, namespace, type, ip } = listener;
+        const { callback, namespace, type, id, ip } = listener;
 
         const info = data.find(e => {
           const namespaceName = e.namespaceName.includes('.json')
@@ -88,7 +91,9 @@ export class ApolloScheduler {
 
           this.listener.set(namespace, { id: info.notificationId, callback, namespace, type, ip });
 
-          callback(config);
+          if (id !== 1) {
+            callback(config);
+          }
         }
       }
     }

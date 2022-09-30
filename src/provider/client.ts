@@ -12,8 +12,11 @@ export class ApolloClientProvider {
   private scheduler: ApolloScheduler;
 
   constructor(options: ApolloClientOptions) {
-    this.httpClient = new ApolloHttpClient(options);
-    this.scheduler = new ApolloScheduler(this.httpClient);
+    const { appId, configServerUrl, clusterName, secret, retry, delay } = options;
+    const clientOptions = { appId, configServerUrl, clusterName, secret };
+
+    this.httpClient = new ApolloHttpClient(clientOptions);
+    this.scheduler = new ApolloScheduler(this.httpClient, retry, delay);
   }
 
   @This
