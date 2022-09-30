@@ -2,7 +2,7 @@ import { This } from '@vodyani/class-decorator';
 import { AgentKeepAlive, HttpClient } from '@vodyani/http-client';
 
 import {
-  ApolloThirdPartyClientOptions,
+  ApolloThirdPartyHttpClientOptions,
   NamespaceType,
 } from '../common';
 
@@ -14,7 +14,7 @@ export class ApolloThirdPartyHttpClient {
   private readonly httpAgent = new AgentKeepAlive({ keepAlive: true });
 
   constructor(
-    private readonly options: ApolloThirdPartyClientOptions,
+    private readonly options: ApolloThirdPartyHttpClientOptions,
   ) {
     const { appId, clusters, env, token, portalServerUrl } = options;
 
