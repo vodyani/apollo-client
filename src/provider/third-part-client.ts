@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { This } from '@vodyani/class-decorator';
 import { AxiosError } from '@vodyani/http-client';
 
-import { ApolloThirdPartyClientOptions, NamespaceType } from '../common';
+import { ApolloThirdPartyHttpClientOptions, NamespaceType } from '../common';
 import { ApolloThirdPartyHttpClient } from '../struct';
 
 @Injectable()
 export class ApolloThirdPartClientProvider {
   private readonly httpClient: ApolloThirdPartyHttpClient;
+
   constructor(
-    private readonly options: ApolloThirdPartyClientOptions,
+    options: ApolloThirdPartyHttpClientOptions,
   ) {
     this.httpClient = new ApolloThirdPartyHttpClient(options);
   }

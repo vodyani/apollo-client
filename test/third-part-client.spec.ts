@@ -1,9 +1,9 @@
 import { describe, it, expect } from '@jest/globals';
 
 import { ApolloThirdPartClientProvider } from '../src/provider';
-import { ApolloThirdPartyClientOptions } from '../src/common';
+import { ApolloThirdPartyHttpClientOptions } from '../src/common';
 
-const clientOptions: ApolloThirdPartyClientOptions = {
+const clientOptions: ApolloThirdPartyHttpClientOptions = {
   env: 'DEV',
   operator: 'apollo',
   appId: 'vodyani-apollo-config',
@@ -15,7 +15,7 @@ describe('ApolloThirdPartyHttpClient', () => {
   const httpClient = new ApolloThirdPartClientProvider(clientOptions);
 
   it('error', async () => {
-    const clientOptions: ApolloThirdPartyClientOptions = {
+    const clientOptions: ApolloThirdPartyHttpClientOptions = {
       env: 'DEV',
       operator: 'apollo',
       appId: 'vodyani-apollo-config',

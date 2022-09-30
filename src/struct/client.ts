@@ -2,7 +2,7 @@ import { This } from '@vodyani/class-decorator';
 import { AgentKeepAlive, HttpClient } from '@vodyani/http-client';
 
 import {
-  ApolloClientOptions,
+  ApolloHttpClientOptions,
   ApolloLongPollingInfo,
   ApolloNotificationOptions,
   NamespaceType,
@@ -16,7 +16,7 @@ export class ApolloHttpClient {
   private readonly httpAgent = new AgentKeepAlive({ keepAlive: true });
 
   constructor(
-    private readonly options: ApolloClientOptions,
+    private readonly options: ApolloHttpClientOptions,
   ) {
     this.httpClient = new HttpClient();
     this.options.clusterName = this.options.clusterName || 'default';
