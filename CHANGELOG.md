@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/vodyani/apollo-client/compare/v1.2.0...v1.3.0) (2022-09-30)
+
+
+### Bug Fixes
+
+* clear unless deps 😞 ([d9de956](https://github.com/vodyani/apollo-client/commit/d9de9560226dd231154c6d737565c80819567877))
+
+
+### Features
+
+* optimize the notification mechanism of long polling to solve the shock effect during init ([fb32cbf](https://github.com/vodyani/apollo-client/commit/fb32cbf14e75b3ee0b7114edb0bf350a05c06a75))
+* support for long polling incoming failed retry times, and failed waiting times ([f86875b](https://github.com/vodyani/apollo-client/commit/f86875b92df87c532a6c833a2bcb43019c7f4756))
+
 # [1.3.0-beta.1](https://github.com/vodyani/apollo-client/compare/v1.2.0...v1.3.0-beta.1) (2022-09-30)
 
 
