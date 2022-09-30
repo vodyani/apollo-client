@@ -7,6 +7,7 @@
 [![Npm](https://img.shields.io/npm/dm/@vodyani/apollo-client)](https://www.npmjs.com/package/@vodyani/apollo-client)
 [![License](https://img.shields.io/github/license/vodyani/apollo-client)](LICENSE)
 <br>
+[![codecov](https://codecov.io/gh/vodyani/apollo-client/branch/master/graph/badge.svg?token=D6T333EU09)](https://codecov.io/gh/vodyani/apollo-client)
 ![Workflow](https://github.com/vodyani/apollo-client/actions/workflows/release.yml/badge.svg)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 

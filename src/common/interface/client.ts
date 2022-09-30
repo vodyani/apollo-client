@@ -5,7 +5,7 @@ export interface ApolloLongPollingInfo {
   notificationId: number;
 }
 
-export interface ApolloLongPollingOptions extends ApolloLongPollingInfo {
+export interface ApolloNotificationOptions extends ApolloLongPollingInfo {
   type: NamespaceType;
 }
 
@@ -22,5 +22,5 @@ export interface ApolloThirdPartyClientOptions {
   portalServerUrl: string
   token: string;
   clusters?: string;
-  operator?: string;
+  operator: string;
 }
