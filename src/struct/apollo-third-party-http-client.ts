@@ -1,10 +1,8 @@
 import { This } from '@vodyani/class-decorator';
-import { AgentKeepAlive, HttpClient } from '@vodyani/http-client';
+import { HttpClient, AgentKeepAlive } from '@vodyani/http-client';
 
-import {
-  ApolloThirdPartyHttpClientOptions,
-  NamespaceType,
-} from '../common';
+import { ApolloThirdPartyHttpClientOptions, NamespaceType } from '../common';
+import { generateNamespace, transformContent } from '../method';
 
 export class ApolloThirdPartyHttpClient {
   private readonly httpBasePath: string;
@@ -16,7 +14,7 @@ export class ApolloThirdPartyHttpClient {
   constructor(
     private readonly options: ApolloThirdPartyHttpClientOptions,
   ) {
-    const { appId, clusters, env, token, portalServerUrl } = options;
+    const { appId, clusterName, env, token, portalServerUrl } = options;
 
     this.httpClient = new HttpClient({
       baseURL: portalServerUrl,
@@ -27,12 +25,12 @@ export class ApolloThirdPartyHttpClient {
     });
 
     this.httpBasePath = `/openapi/v1/envs/${env}/apps/`;
-    this.httpBasePath += `${appId}/clusters/${clusters || 'default'}/namespaces/`;
+    this.httpBasePath += `${appId}/clusters/${clusterName || 'default'}/namespaces/`;
   }
 
   @This
   public async getConfig(namespace: string, type: NamespaceType, key = 'content') {
-    const namespaceName = this.generateNamespace(namespace, type);
+    const namespaceName = generateNamespace(namespace, type);
     const url = `${this.httpBasePath}${namespaceName}/items/${key}`;
 
     const result = await this.httpClient.get(
@@ -43,12 +41,12 @@ export class ApolloThirdPartyHttpClient {
       },
     );
 
-    return this.generateContent(result.data.value, type);
+    return transformContent(result.data.value, type);
   }
 
   @This
   public async saveConfig(namespace: string, type: NamespaceType, value: string, key = 'content') {
-    const namespaceName = this.generateNamespace(namespace, type);
+    const namespaceName = generateNamespace(namespace, type);
     const url = `${this.httpBasePath}${namespaceName}/items/${key}`;
 
     await this.httpClient.put(
@@ -65,11 +63,13 @@ export class ApolloThirdPartyHttpClient {
         },
       },
     );
+
+    await this.publishConfig(namespace, type);
   }
 
   @This
   public async deleteConfig(namespace: string, type: NamespaceType, key = 'content') {
-    const namespaceName = this.generateNamespace(namespace, type);
+    const namespaceName = generateNamespace(namespace, type);
     const url = `${this.httpBasePath}${namespaceName}/items/${key}`;
 
     await this.httpClient.delete(
@@ -80,11 +80,13 @@ export class ApolloThirdPartyHttpClient {
         params: { key, operator: this.options.operator },
       },
     );
+
+    await this.publishConfig(namespace, type);
   }
 
   @This
-  public async publishConfig(namespace: string, type: NamespaceType) {
-    const namespaceName = this.generateNamespace(namespace, type);
+  private async publishConfig(namespace: string, type: NamespaceType) {
+    const namespaceName = generateNamespace(namespace, type);
     const url = `${this.httpBasePath}${namespaceName}/releases`;
 
     await this.httpClient.post(
@@ -93,20 +95,10 @@ export class ApolloThirdPartyHttpClient {
         timeout: 15000,
         httpAgent: this.httpAgent,
         data: {
-          releaseTitle: `release-${this.options.appId}-${Date.now()}`,
+          releaseTitle: `release-${this.options.appId}-${namespace}-${Date.now()}`,
           releasedBy: this.options.operator,
         },
       },
     );
-  }
-
-  @This
-  private generateContent(data: any, type: NamespaceType) {
-    return type === 'json' ? JSON.parse(data) : data;
-  }
-
-  @This
-  private generateNamespace(namespace: string, type: NamespaceType) {
-    return type === 'json' ? `${namespace}.json` : namespace;
   }
 }

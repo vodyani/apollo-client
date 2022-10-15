@@ -1,3 +1,11 @@
+# [1.4.0-beta.1](https://github.com/vodyani/apollo-client/compare/v1.3.0...v1.4.0-beta.1) (2022-10-15)
+
+
+### Features
+
+* optimize dependencies and composition of classes ([1f63360](https://github.com/vodyani/apollo-client/commit/1f63360bf617f198c3fcc22016e22b80e4978b3c))
+* reconstructing the data structure ([f773807](https://github.com/vodyani/apollo-client/commit/f77380704f40a93fd77cef4ac0d52c6f1b8adf79))
+
 # [1.3.0](https://github.com/vodyani/apollo-client/compare/v1.2.0...v1.3.0) (2022-09-30)
 
 

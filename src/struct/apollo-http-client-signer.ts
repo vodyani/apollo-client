@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import { URL } from 'url';
 
-export class HeaderSigner {
+export class ApolloHttpClientSigner {
   constructor(
     private readonly appId: string,
     private readonly secret: string,
@@ -9,22 +9,22 @@ export class HeaderSigner {
 
   public signature(url: string) {
     const timestamp = new Date().getTime();
-    const sign = this.create(timestamp, url);
+    const token = this.createHmac(timestamp, url);
 
     return {
       'Timestamp': timestamp,
-      'Authorization': `Apollo ${this.appId}:${sign}`,
+      'Authorization': `Apollo ${this.appId}:${token}`,
     };
   }
 
-  private create(timestamp: number, url: string): string {
+  private createHmac(timestamp: number, url: string): string {
     return crypto
       .createHmac('sha1', this.secret)
-      .update(`${timestamp}\n${this.urlSignature(url)}`)
+      .update(`${timestamp}\n${this.createUrl(url)}`)
       .digest('base64');
   }
 
-  private urlSignature(url: string): string {
+  private createUrl(url: string): string {
     const { pathname, search } = new URL(url);
     return `${pathname}${search}`;
   }
