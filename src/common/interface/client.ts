@@ -1,31 +1,28 @@
-import { NamespaceType } from '../type';
+import { ApolloObserverOptions } from './options';
 
-export interface ApolloLongPollingInfo {
-  namespaceName: string;
-  notificationId: number;
+export interface IApolloConfigurationItem<T> {
+  options: ApolloObserverOptions;
+  value: T;
 }
 
-export interface ApolloNotificationOptions extends ApolloLongPollingInfo {
-  type: NamespaceType;
+export interface IApolloConfigurationMapper<T = any> {
+  options: ApolloObserverOptions;
+  keys: string[];
+  value: T;
 }
 
-export interface ApolloHttpClientOptions {
-  appId: string;
-  configServerUrl: string
-  clusterName?: string;
-  secret?: string;
+export interface IApolloConfiguration<T = any> {
+  apollo: {
+    [domain: string]: {
+      [namespace: string]: IApolloConfigurationItem<T>;
+    };
+  }
 }
 
-export interface ApolloThirdPartyHttpClientOptions {
-  appId: string;
-  env: string;
-  portalServerUrl: string
-  token: string;
-  clusters?: string;
-  operator: string;
-}
+export interface IApolloConfigMapper<T = any> {
+  init: (config: T) => void;
 
-export interface ApolloClientOptions extends ApolloHttpClientOptions {
-  retry?: number;
-  delay?: number;
+  getOptions: () => ApolloObserverOptions[];
+
+  updateConfig: (namespaceName: string, value: any) => T;
 }
