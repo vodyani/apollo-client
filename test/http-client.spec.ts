@@ -3,9 +3,8 @@ import { IConfigSubscriber } from '@vodyani/core';
 
 import {
   ApolloHttpClient,
-  ApolloHttpClientOptions,
-  ApolloThirdPartyHttpClient,
-  ApolloThirdPartyHttpClientOptions,
+  ApolloHttpClientOptions, ApolloThirdPartyHttpClient,
+  ApolloThirdPartyHttpClientOptions, ApolloConfigObserver,
 } from '../src';
 
 const options: ApolloHttpClientOptions = {
@@ -22,12 +21,14 @@ const thirdPartyOptions: ApolloThirdPartyHttpClientOptions = {
   token: 'fbf1302cd6b2417ebf4511555facbb2371a0fc40',
 };
 
-const timeout = 999999;
-const httpClient = new ApolloHttpClient(options);
 const thirdPartyClient = new ApolloThirdPartyHttpClient(thirdPartyOptions);
+const httpClient = new ApolloHttpClient(options);
+const observer = new ApolloConfigObserver(httpClient);
+const timeout = 999999;
+
 
 afterAll(async () => {
-  httpClient.unPolling();
+  observer.unPolling();
 });
 
 describe('Http Client', () => {
@@ -118,9 +119,9 @@ describe('Http Client', () => {
 
     class DemoSubscriber implements IConfigSubscriber {
       public update(key: string, value: any) {
-        httpClient.unSubscribe('listenNamespace', 'properties');
-        httpClient.unSubscribe('json', 'json');
-        httpClient.unPolling();
+        observer.unSubscribe('listenNamespace', 'properties');
+        observer.unSubscribe('json', 'json');
+        observer.unPolling();
 
         try {
           expect(key).toBe('listenNamespace');
@@ -131,7 +132,7 @@ describe('Http Client', () => {
       }
     }
 
-    httpClient.subscribe(
+    observer.subscribe(
       {
         namespace: 'listenNamespace',
         type: 'properties',
@@ -139,7 +140,7 @@ describe('Http Client', () => {
       new DemoSubscriber(),
     );
 
-    httpClient.subscribe(
+    observer.subscribe(
       {
         namespace: 'json',
         type: 'json',
@@ -148,7 +149,7 @@ describe('Http Client', () => {
     );
 
     await Promise.all([
-      httpClient.polling(),
+      observer.polling(),
       thirdPartyClient.saveConfig('listenNamespace', 'properties', String(current), 'content'),
     ]);
   }, timeout);
@@ -160,8 +161,9 @@ describe('Http Client', () => {
     };
 
     const errorHttpClient = new ApolloHttpClient(options);
+    const observer = new ApolloConfigObserver(errorHttpClient);
 
-    errorHttpClient.subscribe(
+    observer.subscribe(
       {
         namespace: 'listenNamespace2',
         type: 'properties',
@@ -174,7 +176,7 @@ describe('Http Client', () => {
     let message = '';
 
     try {
-      await errorHttpClient.polling(2, 100);
+      await observer.polling(2, 100);
     } catch (error) {
       message = error.message;
     }

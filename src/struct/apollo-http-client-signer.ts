@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import { URL } from 'url';
 
-export class ApolloConfigSigner {
+export class ApolloHttpClientSigner {
   constructor(
     private readonly appId: string,
     private readonly secret: string,

@@ -9,16 +9,6 @@ export interface ApolloHttpClientOptions {
   secret?: string;
 }
 
-export interface ApolloClientBuildOptions {
-  configEnv: string;
-  configFilePath: string;
-  configFileType: 'json' | 'yaml';
-  configMapper?: IApolloConfigMapper;
-  clientPollRetry?: number;
-  clientPollDelay?: number;
-  clientOptions: ApolloHttpClientOptions;
-}
-
 export interface ApolloThirdPartyHttpClientOptions {
   appId: string;
   clusterName?: string;
@@ -26,6 +16,13 @@ export interface ApolloThirdPartyHttpClientOptions {
   portalServerUrl: string
   token: string;
   operator: string;
+}
+
+export interface ApolloClientBuildOptions {
+  clientOptions: ApolloHttpClientOptions;
+  clientMapper?: IApolloConfigMapper;
+  clientPollRetry?: number;
+  clientPollDelay?: number;
 }
 
 export interface ApolloNotificationOptions {

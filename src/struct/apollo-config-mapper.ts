@@ -1,14 +1,14 @@
 import { toDeepMatch, toDeepMerge, toDeepSave } from '@vodyani/utils';
 
-import { ApolloObserverOptions, IApolloConfigMapper, IApolloConfiguration, IApolloConfigurationMapper } from '../common';
+import { IApolloConfigMapper, IApolloConfiguration, ApolloObserverOptions, IApolloConfigurationMapper } from '../common';
 import { generateNamespace } from '../method';
 
-export class ApolloConfigMapper<T = any> implements IApolloConfigMapper<IApolloConfiguration> {
-  private config: IApolloConfiguration<T>;
+export class ApolloConfigMapper implements IApolloConfigMapper<IApolloConfiguration> {
+  private config: IApolloConfiguration;
 
   private options: ApolloObserverOptions[];
 
-  private mappers: Map<string, IApolloConfigurationMapper<T>>;
+  private mappers: Map<string, IApolloConfigurationMapper>;
 
   public init(config: IApolloConfiguration) {
     this.options = [];
@@ -40,10 +40,6 @@ export class ApolloConfigMapper<T = any> implements IApolloConfigMapper<IApolloC
 
   public getOptions() {
     return this.options;
-  }
-
-  public getConfig() {
-    return this.config;
   }
 
   public updateConfig(namespaceName: string, value: any) {

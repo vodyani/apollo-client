@@ -1,10 +1,31 @@
-import { resolve } from 'path';
-
-import { IConfigClientSubscriber } from '@vodyani/core';
+import { IConfigClientSubscriber, IConfigLoader } from '@vodyani/core';
 import { describe, it, expect } from '@jest/globals';
 import { toDeepMatch } from '@vodyani/utils';
 
 import { ApolloClientBuilder, ApolloThirdPartyHttpClient } from '../src';
+
+class Loader implements IConfigLoader {
+  execute() {
+    return {
+      'apollo': {
+        'domain': {
+          'client001': {
+            'options': {
+              'namespace': 'client',
+              'type': 'json',
+            },
+          },
+          'client002': {
+            'options': {
+              'namespace': 'client',
+              'type': 'json',
+            },
+          },
+        },
+      },
+    };
+  }
+}
 
 const clientOptions = {
   configServerUrl: 'http://106.54.227.205:8080',
@@ -20,26 +41,18 @@ const thirdPartyOptions = {
   token: 'fbf1302cd6b2417ebf4511555facbb2371a0fc40',
 };
 
-const timeout = 999999;
 const thirdPartyClient = new ApolloThirdPartyHttpClient(thirdPartyOptions);
+const timeout = 999999;
 
 describe('ApolloClientBuilder', () => {
   it('test', async () => {
     const current = Date.now();
-
-    const builder = new ApolloClientBuilder({
+    const loader = new Loader();
+    const client = new ApolloClientBuilder().build({
       clientOptions,
       clientPollDelay: 1000,
       clientPollRetry: 4,
-      configEnv: 'DEV',
-      configFileType: 'json',
-      configFilePath: `${resolve(__dirname, './files')}/json`,
     });
-
-    const { loader, client } = builder
-      .buildLoader()
-      .buildClient()
-      .export();
 
     class DemoSubscriber implements IConfigClientSubscriber {
       public update(value: any) {

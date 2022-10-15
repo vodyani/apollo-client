@@ -24,7 +24,5 @@ export interface IApolloConfigMapper<T = any> {
 
   getOptions: () => ApolloObserverOptions[];
 
-  getConfig: () => T;
-
   updateConfig: (namespaceName: string, value: any) => T;
 }

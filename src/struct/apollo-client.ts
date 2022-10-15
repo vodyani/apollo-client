@@ -2,22 +2,34 @@ import { This } from '@vodyani/class-decorator';
 import { IConfigClient, IConfigClientSubscriber, IConfigLoader } from '@vodyani/core';
 
 import { IApolloConfigMapper } from '../common';
+import { generateNamespace } from '../method';
 
 import { ApolloHttpClient } from './apollo-http-client';
+import { ApolloConfigObserver } from './apollo-config-observer';
 
-export class ApolloClient implements IConfigClient {
+export class ApolloConfigClient implements IConfigClient {
   private subscriber: IConfigClientSubscriber;
 
   constructor(
-    private readonly client: ApolloHttpClient,
-    private readonly configMapper: IApolloConfigMapper,
-    private readonly clientPollRetry?: number,
-    private readonly clientPollDelay?: number,
+    private readonly httpClient: ApolloHttpClient,
+    private readonly mapper: IApolloConfigMapper,
+    private readonly observer: ApolloConfigObserver,
+    private readonly retry?: number,
+    private readonly delay?: number,
   ) {}
 
   @This
-  public async init<T = any>(loader: IConfigLoader) {
-    const result = await loader.execute<T>();
+  public async init<T = any>(loader: IConfigLoader<T>) {
+    const result = await loader.execute();
+
+    this.mapper.init(result);
+
+    for (const { namespace, type, ip } of this.mapper.getOptions()) {
+      const value = await this.httpClient.getConfigByCache(namespace, type, ip);
+      const namespaceName = generateNamespace(namespace, type);
+      this.mapper.updateConfig(namespaceName, value);
+    }
+
     return result;
   }
 
@@ -25,11 +37,11 @@ export class ApolloClient implements IConfigClient {
   public subscribe(subscriber: IConfigClientSubscriber) {
     this.subscriber = subscriber;
 
-    const options = this.configMapper.getOptions();
+    const options = this.mapper.getOptions();
 
     if (options) {
       options.forEach(info => {
-        this.client.subscribe(info, this);
+        this.observer.subscribe(info, this);
       });
     }
   }
@@ -46,17 +58,17 @@ export class ApolloClient implements IConfigClient {
 
   @This
   public async polling() {
-    await this.client.polling(this.clientPollRetry, this.clientPollDelay);
+    await this.observer.polling(this.retry, this.delay);
   }
 
   @This
   public unPolling() {
-    this.client.unPolling();
+    this.observer.unPolling();
   }
 
   @This
   public update(namespaceName: string, value: any) {
-    const config = this.configMapper.updateConfig(namespaceName, value);
+    const config = this.mapper.updateConfig(namespaceName, value);
     this.notify(config);
   }
 }
