@@ -1,6 +1,6 @@
 # Vodyani apollo-client
 
-🛸 携程 apollo 配置中心客户端。支持配置的查询、更新、订阅、操作开放中心。
+🛸 携程 apollo 配置中心客户端。支持查询配置、订阅配置、使用开放中心提供的公共 API。
 
 [![Npm](https://img.shields.io/npm/v/@vodyani/apollo-client/latest.svg)](https://www.npmjs.com/package/@vodyani/apollo-client)
 [![Npm](https://img.shields.io/npm/v/@vodyani/apollo-client/beta.svg)](https://www.npmjs.com/package/@vodyani/apollo-client)

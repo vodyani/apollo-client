@@ -59,7 +59,7 @@ describe('ApolloClientBuilder', () => {
         client.unSubscribe();
         client.unPolling();
 
-        const config = toDeepMatch(value, 'apollo.domain.client');
+        const config = toDeepMatch(value, 'apollo.domain.client001');
 
         try {
           expect(config.value).toEqual({ content: String(current) });
