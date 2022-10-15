@@ -1,6 +1,6 @@
 # Vodyani apollo-client
 
-🛸 携程 apollo 配置中心的 node.js sdk。支持远程配置的查询、更新、订阅和开放中心的相关操作。
+🛸 携程 apollo 配置中心客户端。支持配置的查询、更新、订阅、操作开放中心。
 
 [![Npm](https://img.shields.io/npm/v/@vodyani/apollo-client/latest.svg)](https://www.npmjs.com/package/@vodyani/apollo-client)
 [![Npm](https://img.shields.io/npm/v/@vodyani/apollo-client/beta.svg)](https://www.npmjs.com/package/@vodyani/apollo-client)
