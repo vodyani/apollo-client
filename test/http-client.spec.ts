@@ -1,0 +1,184 @@
+import { describe, expect, it } from '@jest/globals';
+import { IConfigSubscriber } from '@vodyani/core';
+
+import {
+  ApolloHttpClient,
+  ApolloHttpClientOptions,
+  ApolloThirdPartyHttpClient,
+  ApolloThirdPartyHttpClientOptions,
+} from '../src';
+
+const options: ApolloHttpClientOptions = {
+  configServerUrl: 'http://106.54.227.205:8080',
+  secret: '6984ceaa48b2405b8606631c0a42e7b4',
+  appId: 'vodyani-apollo-config',
+};
+
+const thirdPartyOptions: ApolloThirdPartyHttpClientOptions = {
+  env: 'DEV',
+  operator: 'apollo',
+  appId: 'vodyani-apollo-config',
+  portalServerUrl: 'http://106.54.227.205',
+  token: 'fbf1302cd6b2417ebf4511555facbb2371a0fc40',
+};
+
+const timeout = 999999;
+const httpClient = new ApolloHttpClient(options);
+const thirdPartyClient = new ApolloThirdPartyHttpClient(thirdPartyOptions);
+
+afterAll(async () => {
+  httpClient.unPolling();
+});
+
+describe('Http Client', () => {
+  it('ApolloThirdPartyHttpClient.getConfig', async () => {
+    const [
+      properties,
+      json,
+      yaml,
+      yml,
+      txt,
+    ] = await Promise.all([
+      thirdPartyClient.getConfig('application', 'properties', 'test'),
+      thirdPartyClient.getConfig('test', 'json'),
+      thirdPartyClient.getConfig('test', 'yaml'),
+      thirdPartyClient.getConfig('test', 'yml'),
+      thirdPartyClient.getConfig('test', 'txt'),
+    ]);
+
+    expect(properties).toEqual('1664183227397');
+    expect(json).toEqual({ test: '2e', 'v': '3', 'c': 12 });
+    expect(yaml).toEqual({ test: 'test' });
+    expect(yml).toEqual({ test: 'test' });
+    expect(txt).toBe('test');
+  }, timeout);
+
+  it('ApolloThirdPartyHttpClient del & save config', async () => {
+    const value = { json: 'json' };
+
+    await thirdPartyClient.saveConfig('del', 'json', JSON.stringify(value));
+
+    const result = await httpClient.getConfig('del', 'json');
+
+    expect(result).toEqual(value);
+
+    await thirdPartyClient.deleteConfig('del', 'json');
+
+    const res = await httpClient.getConfig('del', 'json');
+
+    expect(res).toBe(null);
+  }, timeout);
+
+  it('ApolloHttpClient.getConfigByCache', async () => {
+    const [
+      properties,
+      json,
+      yaml,
+      yml,
+      txt,
+    ] = await Promise.all([
+      httpClient.getConfigByCache('application', 'properties'),
+      httpClient.getConfigByCache('test', 'json'),
+      httpClient.getConfigByCache('test', 'yaml'),
+      httpClient.getConfigByCache('test', 'yml'),
+      httpClient.getConfigByCache('test', 'txt'),
+    ]);
+
+    expect(properties).toEqual({ test: '1664183227397' });
+    expect(json).toEqual({ test: '2e', 'v': '3', 'c': 12 });
+    expect(yaml).toEqual({ test: 'test' });
+    expect(yml).toEqual({ test: 'test' });
+    expect(txt).toBe('test');
+  }, timeout);
+
+  it('ApolloHttpClient.getConfig', async () => {
+    const [
+      properties,
+      json,
+      yaml,
+      yml,
+      txt,
+    ] = await Promise.all([
+      httpClient.getConfig('application', 'properties'),
+      httpClient.getConfig('test', 'json'),
+      httpClient.getConfig('test', 'yaml'),
+      httpClient.getConfig('test', 'yml'),
+      httpClient.getConfig('test', 'txt'),
+    ]);
+
+    expect(properties).toEqual({ test: '1664183227397' });
+    expect(json).toEqual({ test: '2e', 'v': '3', 'c': 12 });
+    expect(yaml).toEqual({ test: 'test' });
+    expect(yml).toEqual({ test: 'test' });
+    expect(txt).toBe('test');
+  }, timeout);
+
+  it('ApolloHttpClient.subscribe', async () => {
+    const current = Date.now();
+
+    class DemoSubscriber implements IConfigSubscriber {
+      public update(key: string, value: any) {
+        httpClient.unSubscribe('listenNamespace', 'properties');
+        httpClient.unSubscribe('json', 'json');
+        httpClient.unPolling();
+
+        try {
+          expect(key).toBe('listenNamespace');
+          expect(value).toEqual({ content: String(current) });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    httpClient.subscribe(
+      {
+        namespace: 'listenNamespace',
+        type: 'properties',
+      },
+      new DemoSubscriber(),
+    );
+
+    httpClient.subscribe(
+      {
+        namespace: 'json',
+        type: 'json',
+      },
+      new DemoSubscriber(),
+    );
+
+    await Promise.all([
+      httpClient.polling(),
+      thirdPartyClient.saveConfig('listenNamespace', 'properties', String(current), 'content'),
+    ]);
+  }, timeout);
+
+  it('ApolloHttpClient.error options', async () => {
+    const options: ApolloHttpClientOptions = {
+      configServerUrl: 'http://106.54.227.205:8080',
+      appId: 'vodyani-apollo-config',
+    };
+
+    const errorHttpClient = new ApolloHttpClient(options);
+
+    errorHttpClient.subscribe(
+      {
+        namespace: 'listenNamespace2',
+        type: 'properties',
+      },
+      {
+        update: () => null,
+      },
+    );
+
+    let message = '';
+
+    try {
+      await errorHttpClient.polling(2, 100);
+    } catch (error) {
+      message = error.message;
+    }
+
+    expect(message).toBe('Incorrect polling, please check appId of secret!');
+  }, timeout);
+});

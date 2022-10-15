@@ -1,0 +1,10 @@
+apollo:
+  domain:
+    listenNamespace2:
+      options:
+        namespace: "listenNamespace2"
+        type: "properties"
+    listenNamespace3:
+      options:
+        namespace: "listenNamespace3"
+        type: "json"

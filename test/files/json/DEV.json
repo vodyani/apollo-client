@@ -1,0 +1,12 @@
+{
+  "apollo": {
+    "domain": {
+      "client": {
+        "options": {
+          "namespace": "client",
+          "type": "json"
+        }
+      }
+    }
+  }
+}
