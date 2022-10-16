@@ -65,7 +65,7 @@
   "dependencies": {
     "@nestjs/common": "^8.4.7",
     "@vodyani/class-decorator": "^8.2.3",
-    "@vodyani/core": "^8.9.7",
+    "@vodyani/core": "^8.9.8",
     "@vodyani/http-client": "^1.2.0",
     "@vodyani/utils": "^8.7.1",
     "js-yaml": "^4.1.0"

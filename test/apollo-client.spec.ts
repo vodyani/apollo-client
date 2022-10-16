@@ -29,7 +29,7 @@ class Loader implements IConfigLoader {
 
 const clientOptions = {
   configServerUrl: 'http://106.54.227.205:8080',
-  secret: '6984ceaa48b2405b8606631c0a42e7b4',
+  secret: '825b411eb95442c7bd0f696077cef72e',
   appId: 'vodyani-apollo-config',
 };
 
@@ -38,7 +38,7 @@ const thirdPartyOptions = {
   operator: 'apollo',
   appId: 'vodyani-apollo-config',
   portalServerUrl: 'http://106.54.227.205',
-  token: 'fbf1302cd6b2417ebf4511555facbb2371a0fc40',
+  token: '0dd6ada2ae97abb2bb6cb5c9818141a6c3faf0c3',
 };
 
 const thirdPartyClient = new ApolloThirdPartyHttpClient(thirdPartyOptions);

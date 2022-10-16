@@ -43,8 +43,8 @@ export class ApolloConfigObserver implements IObserver {
   @This
   public async polling(retry?: number, delay?: number) {
     let errorCount = 0;
-    const retryCount = toNumber(retry, 4);
-    const delayCount = toNumber(delay, 1000);
+    const retryCount = toNumber(retry, 10);
+    const delayCount = toNumber(delay, 20000);
 
     while (this.infos.size > 0) {
       try {
