@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/vodyani/apollo-client/compare/v1.4.0...v1.4.1) (2022-10-16)
+
+
+### Bug Fixes
+
+* apollo config observer polling retry count ([22ca504](https://github.com/vodyani/apollo-client/commit/22ca5040e9ac816e693819783d1f246a816fd123))
+
 # [1.4.0](https://github.com/vodyani/apollo-client/compare/v1.3.0...v1.4.0) (2022-10-15)
 
 
