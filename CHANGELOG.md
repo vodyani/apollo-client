@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/vodyani/apollo-client/compare/v1.4.1...v1.4.2) (2022-10-18)
+
+
+### Bug Fixes
+
+* deep replace ([974eabf](https://github.com/vodyani/apollo-client/commit/974eabf00ea2c9008bfa0874e45ed69060b14898))
+
 ## [1.4.1](https://github.com/vodyani/apollo-client/compare/v1.4.0...v1.4.1) (2022-10-16)
 
 
