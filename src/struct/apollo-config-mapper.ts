@@ -1,4 +1,4 @@
-import { toDeepMatch, toDeepMerge, toDeepSave } from '@vodyani/utils';
+import { toDeepMatch, toDeepMerge, toDeepReplace } from '@vodyani/utils';
 
 import { IApolloConfigMapper, IApolloConfiguration, ApolloObserverOptions, IApolloConfigurationMapper } from '../common';
 import { generateNamespace } from '../method';
@@ -50,7 +50,7 @@ export class ApolloConfigMapper implements IApolloConfigMapper<IApolloConfigurat
         const data = toDeepMatch(this.config, key);
         const newData = toDeepMerge(data, { value });
 
-        toDeepSave(this.config, newData, key);
+        toDeepReplace(this.config, newData, key);
       });
     }
 
