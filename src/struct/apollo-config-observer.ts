@@ -43,7 +43,7 @@ export class ApolloConfigObserver implements IObserver {
   @This
   public async polling(retry?: number, delay?: number) {
     let errorCount = 0;
-    const retryCount = toNumber(retry, 10);
+    const retryCount = toNumber(retry, -1);
     const delayCount = toNumber(delay, 20000);
 
     while (this.infos.size > 0) {
@@ -52,11 +52,11 @@ export class ApolloConfigObserver implements IObserver {
       } catch (err) {
         errorCount++;
 
-        if (errorCount > retryCount) {
+        if (retryCount > 0 && errorCount > retryCount) {
           throw new Error('Incorrect polling, please check appId of secret!');
-        } else {
-          await sleep(delayCount);
         }
+
+        await sleep(delayCount);
       }
     }
   }
