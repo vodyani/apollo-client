@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/vodyani/apollo-client/compare/v1.4.2...v1.4.3) (2022-10-24)
+
+
+### Bug Fixes
+
+* supports long polling and unlimited retry ([0fcc984](https://github.com/vodyani/apollo-client/commit/0fcc984399952863ace0bf087096cc598728b891))
+
 ## [1.4.2](https://github.com/vodyani/apollo-client/compare/v1.4.1...v1.4.2) (2022-10-18)
 
 
