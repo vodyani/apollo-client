@@ -27,6 +27,7 @@ npm install @vodyani/apollo-client
   - [getConfig](#apollothirdpartyhttpclient-getconfig)
   - [saveConfig](#apollothirdpartyhttpclient-saveconfig)
   - [deleteConfig](#apollothirdpartyhttpclient-deleteconfig)
+  - [publishConfig](#apollothirdpartyhttpclient-publishconfig)
 - [ApolloConfigObserver](#apolloconfigobserver)
   - [subscribe](#apolloconfigobserver-subscribe)
   - [unSubscribe](#apolloconfigobserver-unsubscribe)
@@ -152,6 +153,8 @@ return
 #### ApolloThirdPartyHttpClient saveConfig
 
 #### ApolloThirdPartyHttpClient deleteConfig
+
+#### ApolloThirdPartyHttpClient publishConfig
 
 ### ApolloConfigObserver
 
