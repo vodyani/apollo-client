@@ -17,13 +17,24 @@
 npm install @vodyani/apollo-client
 ```
 
-## Getting started
+## Usage
 
-- [Supported configuration types](#supported-configuration-types)
-- [Simple Http Client](#apollohttpclient)
+- [ApolloHttpClient](#apollohttpclient)
   - [getConfig](#apollohttpclient-getconfig)
   - [getConfigByCache](#apollohttpclient-getconfigbycache)
   - [getConfigNotifications](#apollohttpclient-getconfignotifications)
+- [ApolloThirdPartyHttpClient](#apollothirdpartyhttpclient)
+  - [getConfig](#apollothirdpartyhttpclient-getconfig)
+  - [saveConfig](#apollothirdpartyhttpclient-saveconfig)
+  - [deleteConfig](#apollothirdpartyhttpclient-deleteconfig)
+- [ApolloConfigObserver](#apolloconfigobserver)
+  - [subscribe](#apolloconfigobserver-subscribe)
+  - [unSubscribe](#apolloconfigobserver-unsubscribe)
+  - [notify](#apolloconfigobserver-notify)
+  - [polling](#apolloconfigobserver-polling)
+  - [unPolling](#apolloconfigobserver-unpolling)
+- [Use Client With Ark (Recommendation ⭐️)](#use-client-with-ark)
+- [Supported Configuration types](#supported-configuration-types)
 
 ### ApolloHttpClient
 
@@ -61,7 +72,7 @@ params
 
 - namespace `string` apollo app namespace. (require: ✅)
 - type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
-- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_13-%e9%80%9a%e8%bf%87%e4%b8%8d%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
+- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_12-%e9%80%9a%e8%bf%87%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
 
 return
 
@@ -89,7 +100,7 @@ params
 
 - namespace `string` apollo app namespace. (require: ✅)
 - type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
-- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_13-%e9%80%9a%e8%bf%87%e4%b8%8d%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
+- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_12-%e9%80%9a%e8%bf%87%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
 
 return
 
@@ -134,7 +145,29 @@ return
 ]
 ```
 
-### Supported configuration types
+#### ApolloThirdPartyHttpClient
+
+#### ApolloThirdPartyHttpClient getConfig
+
+#### ApolloThirdPartyHttpClient saveConfig
+
+#### ApolloThirdPartyHttpClient deleteConfig
+
+### ApolloConfigObserver
+
+#### ApolloConfigObserver subscribe
+
+#### ApolloConfigObserver unSubscribe
+
+#### ApolloConfigObserver notify
+
+#### ApolloConfigObserver polling
+
+#### ApolloConfigObserver unPolling
+
+### Use Client With Ark
+
+### Supported Configuration types
 
 - properties ✅
 - yaml ✅
