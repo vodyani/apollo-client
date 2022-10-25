@@ -19,8 +19,129 @@ npm install @vodyani/apollo-client
 
 ## Getting started
 
-- [使用文档 📚](https://vodyani.netlify.app/docs/advanced/apollo-client)
-- [Documentation 📚](https://vodyani.netlify.app/en/docs/advanced/apollo-client)
+- [Supported configuration types](#supported-configuration-types)
+- [Simple Http Client](#apollohttpclient)
+  - [getConfig](#apollohttpclient-getconfig)
+  - [getConfigByCache](#apollohttpclient-getconfigbycache)
+  - [getConfigNotifications](#apollohttpclient-getconfignotifications)
+
+### ApolloHttpClient
+
+```ts
+import { ApolloHttpClient } from '@vodyani/apollo-client'
+
+const options = {
+  appId: 'your_apollo_app_id',
+  configServerUrl: 'your_apollo_config_server_url',
+  clusterName: 'your_apollo_cluster_name',
+  secret: 'your_apollo_app_secret',
+};
+
+const httpClient = new ApolloHttpClient(options);
+```
+
+options
+
+- appId (require: ✅) apollo app id
+- configServerUrl (require: ✅) apollo config server url
+- clusterName (require: ❎) apollo app cluster name
+- secret (require: ❎) apollo app secret
+
+#### ApolloHttpClient getConfig
+
+```ts
+const result = await httpClient.getConfig(
+  'your_apollo_namespace',
+  'properties',
+  'your_apollo_namespace_ip,
+)
+```
+
+params
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_13-%e9%80%9a%e8%bf%87%e4%b8%8d%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
+
+return
+
+```ts
+{
+  'your_apollo_namespace_key': 'your_apollo_namespace_value'
+}
+```
+
+- *Other than txt, which returns text, all formats are deserialized as objects.*
+
+#### ApolloHttpClient getConfigByCache
+
+> Call this method to access cached data.
+
+```ts
+const result = await httpClient.getConfigByCache(
+  'your_apollo_namespace',
+  'properties',
+  'your_apollo_namespace_ip,
+)
+```
+
+params
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_13-%e9%80%9a%e8%bf%87%e4%b8%8d%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
+
+return
+
+```ts
+{
+  'your_apollo_namespace_key': 'your_apollo_namespace_value'
+}
+```
+
+- *Other than txt, which returns text, all formats are deserialized as objects.*
+
+#### ApolloHttpClient getConfigNotifications 
+
+> Call this method to initiate a long poll that listens to the specified namespace and receives updates back from the server.
+
+```ts
+const result = await httpClient.getConfigNotifications([
+  {
+    namespace: 'your_apollo_namespace',
+    type: 'properties',
+    ip: 'your_apollo_namespace_ip',
+    id: 'your_apollo_notify_id',
+  }
+])
+```
+
+params
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_13-%e9%80%9a%e8%bf%87%e4%b8%8d%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
+- id `number` the notify id (require: ❎)
+
+return
+
+```ts
+[
+  {
+    namespaceName: 'your_apollo_namespace_name';
+    notificationId: 'your_apollo_notify_id',
+  },
+]
+```
+
+### Supported configuration types
+
+- properties ✅
+- yaml ✅
+- yml ✅
+- json ✅
+- txt ✅
+- xml ❎
 
 ## Questions
 

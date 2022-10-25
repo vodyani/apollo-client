@@ -1,5 +1,6 @@
 import { This } from '@vodyani/class-decorator';
 import { AgentKeepAlive, HttpClient } from '@vodyani/http-client';
+import { toNumber } from '@vodyani/utils';
 
 import { ApolloHttpClientOptions, ApolloNotificationOptions, ApolloObserverInfo, NamespaceType } from '../common';
 import { generateNamespace, transformContent } from '../method';
@@ -64,7 +65,7 @@ export class ApolloHttpClient {
     const { appId, clusterName, configServerUrl } = this.options;
 
     const notifications = infos.map(({ namespace, id, type }) => ({
-      notificationId: id,
+      notificationId: toNumber(id, 1),
       namespaceName: generateNamespace(namespace, type),
     }));
 
