@@ -2,7 +2,8 @@ import { resolve } from 'path';
 
 import { Injectable, Module } from '@nestjs/common';
 import { ApolloClientBuilder } from '@vodyani/apollo-client';
-import { ArkModule, ConfigProvider, JSONConfigLoader } from '@vodyani/ark';
+import { ArkModule, ArkManager, ConfigProvider, JSONConfigLoader } from '@vodyani/ark';
+import { AsyncInject } from '@vodyani/core';
 
 @Module({
   imports: [
@@ -34,9 +35,10 @@ import { ArkModule, ConfigProvider, JSONConfigLoader } from '@vodyani/ark';
 export class AppModule {}
 
 // Usage in the other provider
-@Injectable
+@Injectable()
 class Logger {
   constructor(
+    @AsyncInject(ArkManager)
     private readonly config: ConfigProvider,
   ) {}
 
