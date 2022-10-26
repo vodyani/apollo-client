@@ -2,7 +2,7 @@ import { This } from '@vodyani/class-decorator';
 import { IConfigSubscriber, IObserver } from '@vodyani/core';
 import { toNumber, sleep, isValidArray } from '@vodyani/utils';
 
-import { ApolloObserverInfo, NamespaceType } from '../common';
+import { ApolloObserverInfo, ApolloObserverOptions, NamespaceType } from '../common';
 import { generateNamespace, transformNamespace } from '../method';
 
 import { ApolloHttpClient } from './apollo-http-client';
@@ -17,10 +17,14 @@ export class ApolloConfigObserver implements IObserver {
   ) {}
 
   @This
-  public subscribe(info: ApolloObserverInfo, subscriber: IConfigSubscriber) {
+  public subscribe(info: ApolloObserverOptions, subscriber: IConfigSubscriber) {
     const namespaceName = generateNamespace(info.namespace, info.type);
-    this.subscribers.set(namespaceName, subscriber);
-    this.infos.set(namespaceName, { ...info, id: 1 });
+
+    if (!this.subscribers.has(namespaceName)) {
+      this.subscribers.set(namespaceName, subscriber);
+
+      this.infos.set(namespaceName, { ...info, id: 1 });
+    }
   }
 
   @This
@@ -82,12 +86,12 @@ export class ApolloConfigObserver implements IObserver {
           const observerInfo = this.infos.get(namespaceName);
 
           if (observerInfo) {
-            const { id, type, ip } = observerInfo;
+            const { id, type } = observerInfo;
 
             observerInfo.id = notificationId;
 
             if (id !== 1) {
-              const config = await this.httpClient.getConfig(namespace, type, ip);
+              const config = await this.httpClient.getConfig(namespace, type);
 
               this.notify(namespace, type, config);
             }

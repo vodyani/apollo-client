@@ -73,13 +73,19 @@ describe('ApolloClientBuilder', () => {
 
     client.subscribe(new DemoSubscriber());
 
-    await Promise.all([
-      client.polling(),
-      thirdPartyClient.saveConfig(
+    const saveAndPublish = async () => {
+      await thirdPartyClient.saveConfig(
         'client',
         'json',
         JSON.stringify({ content: String(current) }),
-      ),
+      );
+
+      await thirdPartyClient.publishConfig('client', 'json');
+    };
+
+    await Promise.all([
+      client.polling(),
+      saveAndPublish(),
     ]);
   }, timeout);
 });

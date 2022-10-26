@@ -24,8 +24,8 @@ export class ApolloConfigClient implements IConfigClient {
 
     this.mapper.init(result);
 
-    for (const { namespace, type, ip } of this.mapper.getOptions()) {
-      const value = await this.httpClient.getConfigByCache(namespace, type, ip);
+    for (const { namespace, type } of this.mapper.getOptions()) {
+      const value = await this.httpClient.getConfigByCache(namespace, type);
       const namespaceName = generateNamespace(namespace, type);
       this.mapper.updateConfig(namespaceName, value);
     }

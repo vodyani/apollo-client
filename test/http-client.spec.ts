@@ -58,12 +58,14 @@ describe('Http Client', () => {
     const value = { json: 'json' };
 
     await thirdPartyClient.saveConfig('del', 'json', JSON.stringify(value));
+    await thirdPartyClient.publishConfig('del', 'json');
 
     const result = await httpClient.getConfig('del', 'json');
 
     expect(result).toEqual(value);
 
     await thirdPartyClient.deleteConfig('del', 'json');
+    await thirdPartyClient.publishConfig('del', 'json');
 
     const res = await httpClient.getConfig('del', 'json');
 
@@ -148,9 +150,14 @@ describe('Http Client', () => {
       new DemoSubscriber(),
     );
 
+    const saveAndPublish = async () => {
+      await thirdPartyClient.saveConfig('listenNamespace', 'properties', String(current), 'content');
+      await thirdPartyClient.publishConfig('listenNamespace', 'properties');
+    };
+
     await Promise.all([
       observer.polling(),
-      thirdPartyClient.saveConfig('listenNamespace', 'properties', String(current), 'content'),
+      saveAndPublish(),
     ]);
   }, timeout);
 
@@ -158,9 +165,17 @@ describe('Http Client', () => {
     const options: ApolloHttpClientOptions = {
       configServerUrl: 'http://106.54.227.205:8080',
       appId: 'vodyani-apollo-config',
+      currentIp: '1',
     };
 
     const errorHttpClient = new ApolloHttpClient(options);
+
+    try {
+      await errorHttpClient.getConfig('error', 'json');
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+    }
+
     const observer = new ApolloConfigObserver(errorHttpClient);
 
     observer.subscribe(

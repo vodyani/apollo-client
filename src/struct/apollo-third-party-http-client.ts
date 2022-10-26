@@ -63,8 +63,6 @@ export class ApolloThirdPartyHttpClient {
         },
       },
     );
-
-    await this.publishConfig(namespace, type);
   }
 
   @This
@@ -80,12 +78,10 @@ export class ApolloThirdPartyHttpClient {
         params: { key, operator: this.options.operator },
       },
     );
-
-    await this.publishConfig(namespace, type);
   }
 
   @This
-  private async publishConfig(namespace: string, type: NamespaceType) {
+  public async publishConfig(namespace: string, type: NamespaceType) {
     const namespaceName = generateNamespace(namespace, type);
     const url = `${this.httpBasePath}${namespaceName}/releases`;
 

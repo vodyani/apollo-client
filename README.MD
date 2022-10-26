@@ -17,10 +17,271 @@
 npm install @vodyani/apollo-client
 ```
 
-## Getting started
+## Usage
 
-- [使用文档 📚](https://vodyani.netlify.app/docs/advanced/apollo-client)
-- [Documentation 📚](https://vodyani.netlify.app/en/docs/advanced/apollo-client)
+*Base Usage*
+
+- [ApolloHttpClient](#apollohttpclient)
+  - [getConfig](#apollohttpclient-getconfig)
+  - [getConfigByCache](#apollohttpclient-getconfigbycache)
+  - [getConfigNotifications](#apollohttpclient-getconfignotifications)
+- [ApolloThirdPartyHttpClient](#apollothirdpartyhttpclient)
+  - [getConfig](#apollothirdpartyhttpclient-getconfig)
+  - [saveConfig](#apollothirdpartyhttpclient-saveconfig)
+  - [deleteConfig](#apollothirdpartyhttpclient-deleteconfig)
+  - [publishConfig](#apollothirdpartyhttpclient-publishconfig)
+- [Supported Configuration types](#supported-configuration-types)
+
+*Advanced Usage*
+
+- [Use With Config Observer](https://github.com/vodyani/apollo-client/tree/master/sample/use-with-config-observer.ts)
+- [Use With Ark Manager](https://github.com/vodyani/apollo-client/tree/master/sample/use-with-ark-manager.ts)
+- [Use With Dependency injection (Recommendation ⭐️)](https://github.com/vodyani/apollo-client/tree/master/sample/use-with-ark.ts)
+
+### ApolloHttpClient
+
+```ts
+import { ApolloHttpClient } from '@vodyani/apollo-client'
+
+const options = {
+  appId: 'your_apollo_app_id',
+  configServerUrl: 'your_apollo_config_server_url',
+  clusterName: 'your_apollo_cluster_name',
+  currentIp: 'your_server_ip',
+  secret: 'your_apollo_app_secret',
+};
+
+const httpClient = new ApolloHttpClient(options);
+```
+
+**options**
+
+- appId (require: ✅) apollo app id
+- configServerUrl (require: ✅) apollo config server url
+- clusterName (require: ❎) apollo app cluster name
+- currentIp (require: ❎) your server ip
+- secret (require: ❎) apollo app secret
+
+#### ApolloHttpClient getConfig
+
+```ts
+const result = await httpClient.getConfig(
+  'your_apollo_namespace',
+  'properties'
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+
+**return**
+
+```ts
+{
+  'your_apollo_namespace_key': 'your_apollo_namespace_value'
+}
+```
+
+- *Other than txt, which returns text, all formats are deserialized as objects.*
+
+#### ApolloHttpClient getConfigByCache
+
+> Call this method to access cached data.
+
+```ts
+const result = await httpClient.getConfigByCache(
+  'your_apollo_namespace',
+  'properties',
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+
+**return**
+
+```ts
+{
+  'your_apollo_namespace_key': 'your_apollo_namespace_value'
+}
+```
+
+- *Other than txt, which returns text, all formats are deserialized as objects.*
+
+#### ApolloHttpClient getConfigNotifications 
+
+> Call this method to initiate a long poll that listens to the specified namespace and receives updates back from the server.
+
+```ts
+const result = await httpClient.getConfigNotifications([
+  {
+    namespace: 'your_apollo_namespace',
+    type: 'properties',
+  }
+])
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+
+**return**
+
+```ts
+[
+  {
+    namespaceName: 'your_apollo_namespace_name';
+    notificationId: 'your_apollo_notify_id',
+  },
+]
+```
+
+### ApolloThirdPartyHttpClient
+
+```ts
+import { ApolloThirdPartyHttpClient } from '@vodyani/apollo-client'
+
+const options = {
+  appId: 'your_apollo_app_id',
+  clusterName: 'your_apollo_cluster_name',
+  env: 'your_apollo_env',
+  secret: 'your_apollo_app_secret',
+  token: 'your_apollo_open_api_token',
+  portalServerUrl: 'your_apollo_portal_server_url',
+  operator: 'your_apollo_open_api_operator_user_name',
+};
+
+const thirdPartyOptions = new ApolloThirdPartyHttpClient(options);
+```
+
+**options**
+
+- appId (require: ✅) apollo app id
+- env (require: ✅) apollo env
+- token (require: ✅) apollo app open api token
+- portalServerUrl (require: ✅) apollo portal server url
+- operator (require: ✅) apollo open api operator user name
+- clusterName (require: ❎) apollo app cluster name
+
+#### ApolloThirdPartyHttpClient getConfig
+
+```ts
+const result = await thirdPartyOptions.getConfig(
+  'your_apollo_namespace',
+  'properties',
+  'your_apollo_namespace_property'
+)
+
+const result = await thirdPartyOptions.getConfig(
+  'your_apollo_namespace',
+  'json'
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+- key `string` apollo app namespace property, this parameter is mandatory only when type `properties` is queried
+
+**return**
+
+```ts
+{
+  'your_apollo_namespace_key': 'your_apollo_namespace_value'
+}
+```
+
+#### ApolloThirdPartyHttpClient saveConfig
+
+> If you need to publish the configuration, don't forget to call it after execution `publishConfig`
+
+```ts
+const result = await thirdPartyOptions.saveConfig(
+  'your_apollo_namespace',
+  'properties',
+  'your_apollo_namespace_property'
+)
+
+const result = await thirdPartyOptions.saveConfig(
+  'your_apollo_namespace',
+  'json'
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+- key `string` apollo app namespace property, this parameter is mandatory only when type `properties` is queried
+
+**return**
+ 
+void
+
+#### ApolloThirdPartyHttpClient deleteConfig
+
+> If you need to publish the configuration, don't forget to call it after execution `publishConfig`
+
+```ts
+const result = await thirdPartyOptions.deleteConfig(
+  'your_apollo_namespace',
+  'properties',
+  'your_apollo_namespace_property'
+)
+
+const result = await thirdPartyOptions.deleteConfig(
+  'your_apollo_namespace',
+  'json'
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+- key `string` apollo app namespace property, this parameter is mandatory only when type `properties` is queried
+
+**return**
+ 
+void
+
+#### ApolloThirdPartyHttpClient publishConfig
+
+```ts
+const result = await thirdPartyOptions.publishConfig(
+  'your_apollo_namespace',
+  'properties'
+)
+
+const result = await thirdPartyOptions.publishConfig(
+  'your_apollo_namespace',
+  'json'
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+
+**return**
+ 
+void
+
+### Supported Configuration types
+
+- properties ✅
+- yaml ✅
+- yml ✅
+- json ✅
+- txt ✅
+- xml ❎
 
 ## Questions
 
