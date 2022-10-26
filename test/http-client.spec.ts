@@ -165,9 +165,17 @@ describe('Http Client', () => {
     const options: ApolloHttpClientOptions = {
       configServerUrl: 'http://106.54.227.205:8080',
       appId: 'vodyani-apollo-config',
+      currentIp: '1',
     };
 
     const errorHttpClient = new ApolloHttpClient(options);
+
+    try {
+      await errorHttpClient.getConfig('error', 'json');
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+    }
+
     const observer = new ApolloConfigObserver(errorHttpClient);
 
     observer.subscribe(

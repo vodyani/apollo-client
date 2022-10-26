@@ -1,5 +1,5 @@
 import { This } from '@vodyani/class-decorator';
-import { AgentKeepAlive, HttpClient } from '@vodyani/http-client';
+import { AgentKeepAlive, AxiosRequestConfig, HttpClient } from '@vodyani/http-client';
 import { toNumber } from '@vodyani/utils';
 
 import { ApolloHttpClientOptions, ApolloNotificationOptions, ApolloObserverInfo, NamespaceType } from '../common';
@@ -19,7 +19,7 @@ export class ApolloHttpClient {
   }
 
   @This
-  public async getConfig(namespace: string, type: NamespaceType, ip?: string): Promise<Record<string, any>> {
+  public async getConfig(namespace: string, type: NamespaceType): Promise<Record<string, any>> {
     const { appId, clusterName, configServerUrl } = this.options;
 
     let url = configServerUrl;
@@ -28,19 +28,14 @@ export class ApolloHttpClient {
 
     const result = await this.httpClient.get(
       url,
-      {
-        headers: this.generateHeaders(url),
-        httpAgent: this.httpAgent,
-        timeout: 15000,
-        params: { ip },
-      },
+      this.generateRequestOptions(url),
     );
 
     return transformContent(result.data.configurations, type);
   }
 
   @This
-  public async getConfigByCache(namespace: string, type: NamespaceType, ip?: string): Promise<Record<string, any>> {
+  public async getConfigByCache(namespace: string, type: NamespaceType): Promise<Record<string, any>> {
     const { appId, clusterName, configServerUrl } = this.options;
 
     let url = configServerUrl;
@@ -49,12 +44,7 @@ export class ApolloHttpClient {
 
     const result = await this.httpClient.get(
       url,
-      {
-        headers: this.generateHeaders(url),
-        httpAgent: this.httpAgent,
-        timeout: 15000,
-        params: { ip },
-      },
+      this.generateRequestOptions(url),
     );
 
     return transformContent(result.data, type);
@@ -84,6 +74,21 @@ export class ApolloHttpClient {
     );
 
     return result.data as ApolloNotificationOptions[];
+  }
+
+  @This
+  private generateRequestOptions(url: string) {
+    const options: AxiosRequestConfig = {
+      headers: this.generateHeaders(url),
+      httpAgent: this.httpAgent,
+      timeout: 15000,
+    };
+
+    if (this.options.currentIp) {
+      options.params.ip = this.options.currentIp;
+    }
+
+    return options;
   }
 
   @This

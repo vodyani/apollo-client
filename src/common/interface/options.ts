@@ -7,6 +7,7 @@ export interface ApolloHttpClientOptions {
   clusterName?: string;
   configServerUrl: string
   secret?: string;
+  currentIp?: string;
 }
 
 export interface ApolloThirdPartyHttpClientOptions {
@@ -33,7 +34,6 @@ export interface ApolloNotificationOptions {
 export interface ApolloObserverOptions {
   namespace: string;
   type: NamespaceType;
-  ip?: string;
 }
 
 export interface ApolloObserverInfo extends ApolloObserverOptions {

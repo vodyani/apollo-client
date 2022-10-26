@@ -46,17 +46,19 @@ const options = {
   appId: 'your_apollo_app_id',
   configServerUrl: 'your_apollo_config_server_url',
   clusterName: 'your_apollo_cluster_name',
+  currentIp: 'your_server_ip',
   secret: 'your_apollo_app_secret',
 };
 
 const httpClient = new ApolloHttpClient(options);
 ```
 
-options
+**options**
 
 - appId (require: ✅) apollo app id
 - configServerUrl (require: ✅) apollo config server url
 - clusterName (require: ❎) apollo app cluster name
+- currentIp (require: ❎) your server ip
 - secret (require: ❎) apollo app secret
 
 #### ApolloHttpClient getConfig
@@ -64,18 +66,16 @@ options
 ```ts
 const result = await httpClient.getConfig(
   'your_apollo_namespace',
-  'properties',
-  'your_apollo_namespace_ip,
+  'properties'
 )
 ```
 
-params
+**params**
 
 - namespace `string` apollo app namespace. (require: ✅)
 - type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
-- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_12-%e9%80%9a%e8%bf%87%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
 
-return
+**return**
 
 ```ts
 {
@@ -93,17 +93,15 @@ return
 const result = await httpClient.getConfigByCache(
   'your_apollo_namespace',
   'properties',
-  'your_apollo_namespace_ip,
 )
 ```
 
-params
+**params**
 
 - namespace `string` apollo app namespace. (require: ✅)
 - type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
-- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_12-%e9%80%9a%e8%bf%87%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
 
-return
+**return**
 
 ```ts
 {
@@ -128,14 +126,12 @@ const result = await httpClient.getConfigNotifications([
 ])
 ```
 
-params
+**params**
 
 - namespace `string` apollo app namespace. (require: ✅)
 - type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
-- ip `string` apollo app server ip  (require: ❎), [see docs](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide?id=_13-%e9%80%9a%e8%bf%87%e4%b8%8d%e5%b8%a6%e7%bc%93%e5%ad%98%e7%9a%84http%e6%8e%a5%e5%8f%a3%e4%bb%8eapollo%e8%af%bb%e5%8f%96%e9%85%8d%e7%bd%ae)
-- id `number` the notify id (require: ❎)
 
-return
+**return**
 
 ```ts
 [
@@ -146,13 +142,69 @@ return
 ]
 ```
 
-#### ApolloThirdPartyHttpClient
+### ApolloThirdPartyHttpClient
+
+```ts
+import { ApolloThirdPartyHttpClient } from '@vodyani/apollo-client'
+
+const options = {
+  appId: 'your_apollo_app_id',
+  clusterName: 'your_apollo_cluster_name',
+  env: 'your_apollo_env',
+  secret: 'your_apollo_app_secret',
+  token: 'your_apollo_open_api_token',
+  portalServerUrl: 'your_apollo_portal_server_url',
+  operator: 'your_apollo_open_api_operator_user_name',
+};
+
+const thirdPartyOptions = new ApolloThirdPartyHttpClient(options);
+```
+
+**options**
+
+- appId (require: ✅) apollo app id
+- env (require: ✅) apollo env
+- token (require: ✅) apollo app open api token
+- portalServerUrl (require: ✅) apollo portal server url
+- operator (require: ✅) apollo open api operator user name
+- clusterName (require: ❎) apollo app cluster name
 
 #### ApolloThirdPartyHttpClient getConfig
 
+```ts
+const result = await thirdPartyOptions.getConfig(
+  'your_apollo_namespace',
+  'properties',
+  'your_apollo_namespace_property'
+)
+
+const result = await thirdPartyOptions.getConfig(
+  'your_apollo_namespace',
+  'json'
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+- key `string` apollo app namespace property, this parameter is mandatory only when type `properties` is queried
+
+**return**
+
+```ts
+{
+  'your_apollo_namespace_key': 'your_apollo_namespace_value'
+}
+```
+
 #### ApolloThirdPartyHttpClient saveConfig
 
+> If you need to publish the configuration, don't forget to call it after execution `publishConfig`
+
 #### ApolloThirdPartyHttpClient deleteConfig
+
+> If you need to publish the configuration, don't forget to call it after execution `publishConfig`
 
 #### ApolloThirdPartyHttpClient publishConfig
 
