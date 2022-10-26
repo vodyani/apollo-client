@@ -1,0 +1,12 @@
+{
+  "apollo": {
+    "your_custom_domain_name": {
+      "your_custom_namespace_alias": {
+        "options": {
+          "namespace": "your_apollo_namespace",
+          "type": "json"
+        }
+      }
+    }
+  }
+}

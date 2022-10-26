@@ -19,6 +19,8 @@ npm install @vodyani/apollo-client
 
 ## Usage
 
+*Base Usage*
+
 - [ApolloHttpClient](#apollohttpclient)
   - [getConfig](#apollohttpclient-getconfig)
   - [getConfigByCache](#apollohttpclient-getconfigbycache)
@@ -28,14 +30,13 @@ npm install @vodyani/apollo-client
   - [saveConfig](#apollothirdpartyhttpclient-saveconfig)
   - [deleteConfig](#apollothirdpartyhttpclient-deleteconfig)
   - [publishConfig](#apollothirdpartyhttpclient-publishconfig)
-- [ApolloConfigObserver](#apolloconfigobserver)
-  - [subscribe](#apolloconfigobserver-subscribe)
-  - [unSubscribe](#apolloconfigobserver-unsubscribe)
-  - [notify](#apolloconfigobserver-notify)
-  - [polling](#apolloconfigobserver-polling)
-  - [unPolling](#apolloconfigobserver-unpolling)
-- [Use Client With Ark (Recommendation ⭐️)](#use-client-with-ark)
 - [Supported Configuration types](#supported-configuration-types)
+
+*Advanced Usage*
+
+- [Use With Config Observer](https://github.com/vodyani/apollo-client/tree/master/sample/use-with-config-observer.ts)
+- [Use With Ark Manager](https://github.com/vodyani/apollo-client/tree/master/sample/use-with-ark-manager.ts)
+- [Use With Dependency injection (Recommendation ⭐️)](https://github.com/vodyani/apollo-client/tree/master/sample/use-with-ark.ts)
 
 ### ApolloHttpClient
 
@@ -120,8 +121,6 @@ const result = await httpClient.getConfigNotifications([
   {
     namespace: 'your_apollo_namespace',
     type: 'properties',
-    ip: 'your_apollo_namespace_ip',
-    id: 'your_apollo_notify_id',
   }
 ])
 ```
@@ -274,20 +273,6 @@ const result = await thirdPartyOptions.publishConfig(
 **return**
  
 void
-
-### ApolloConfigObserver
-
-#### ApolloConfigObserver subscribe
-
-#### ApolloConfigObserver unSubscribe
-
-#### ApolloConfigObserver notify
-
-#### ApolloConfigObserver polling
-
-#### ApolloConfigObserver unPolling
-
-### Use Client With Ark
 
 ### Supported Configuration types
 
