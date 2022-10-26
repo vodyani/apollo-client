@@ -202,11 +202,78 @@ const result = await thirdPartyOptions.getConfig(
 
 > If you need to publish the configuration, don't forget to call it after execution `publishConfig`
 
+```ts
+const result = await thirdPartyOptions.saveConfig(
+  'your_apollo_namespace',
+  'properties',
+  'your_apollo_namespace_property'
+)
+
+const result = await thirdPartyOptions.saveConfig(
+  'your_apollo_namespace',
+  'json'
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+- key `string` apollo app namespace property, this parameter is mandatory only when type `properties` is queried
+
+**return**
+ 
+void
+
 #### ApolloThirdPartyHttpClient deleteConfig
 
 > If you need to publish the configuration, don't forget to call it after execution `publishConfig`
 
+```ts
+const result = await thirdPartyOptions.deleteConfig(
+  'your_apollo_namespace',
+  'properties',
+  'your_apollo_namespace_property'
+)
+
+const result = await thirdPartyOptions.deleteConfig(
+  'your_apollo_namespace',
+  'json'
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+- key `string` apollo app namespace property, this parameter is mandatory only when type `properties` is queried
+
+**return**
+ 
+void
+
 #### ApolloThirdPartyHttpClient publishConfig
+
+```ts
+const result = await thirdPartyOptions.publishConfig(
+  'your_apollo_namespace',
+  'properties'
+)
+
+const result = await thirdPartyOptions.publishConfig(
+  'your_apollo_namespace',
+  'json'
+)
+```
+
+**params**
+
+- namespace `string` apollo app namespace. (require: ✅)
+- type [`NamespaceType`](#supported-configuration-types) apollo app namespace type.  (require: ✅)
+
+**return**
+ 
+void
 
 ### ApolloConfigObserver
 
