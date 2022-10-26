@@ -1,3 +1,17 @@
+# [1.5.0](https://github.com/vodyani/apollo-client/compare/v1.4.3...v1.5.0) (2022-10-26)
+
+
+### Bug Fixes
+
+* decouple the development platform from the coupling between save, delete, and release ([44aff71](https://github.com/vodyani/apollo-client/commit/44aff716cc71f308dde4b66036e1e6584e8d36f6))
+* notifications id and update docs ([be83107](https://github.com/vodyani/apollo-client/commit/be83107f7e43c0e4bac1bfa50a8464318dbc45da))
+
+
+### Features
+
+* external availability of basic methods ([366cde6](https://github.com/vodyani/apollo-client/commit/366cde6529c9f700e9b7b082da3db309e43c3f55))
+* solve the application ip parameter transmission problem ([1cb0075](https://github.com/vodyani/apollo-client/commit/1cb007586ffbace9ef1b033ca0c7ce1db126d289))
+
 ## [1.4.3](https://github.com/vodyani/apollo-client/compare/v1.4.2...v1.4.3) (2022-10-24)
 
 
