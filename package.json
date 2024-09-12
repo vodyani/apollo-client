@@ -71,8 +71,8 @@
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "16.3.0",
-    "@commitlint/config-conventional": "16.2.4",
+    "@commitlint/cli": "19.5.0",
+    "@commitlint/config-conventional": "19.5.0",
     "@types/jest": "27.5.2",
     "@types/js-yaml": "^4.0.5",
     "@types/node": "16.11.56",
